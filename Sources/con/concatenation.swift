@@ -60,7 +60,7 @@ struct Concatenate: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "concat",
         abstract: "Concatenate file contents.",
-        subcommands: [Default.self, Select.self],
+        subcommands: [Default.self, Select.self, Figure.self],
         defaultSubcommand: Default.self
 
     )
@@ -187,6 +187,78 @@ struct Concatenate: ParsableCommand {
                     verbose: options.verboseOutput
                 )
                 let total = try concatenator.run()
+                print("Concatenation completed: \(outputPath)")
+                print("\(total) lines concatenated.")
+            }
+        }
+    }
+
+    struct Figure: ParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "figure",
+            abstract: "Manage the .configure file.",
+            subcommands: [Init.self],
+        )
+
+        struct Init: ParsableCommand {
+            @Flag(help: "Force overwrite existing .configure")
+            var force: Bool = false
+
+            func run() throws {
+                let initializer = ConfigureInitializer()
+                do {
+                    try initializer.initialize(force: force)
+                    print(".configure created.")
+                } catch ConfigureError.alreadyExists {
+                    print(".configure already exists, use --force to overwrite.")
+                }
+            }
+        }
+
+        struct ConcatenateFromConfigure: ParsableCommand {
+            @Option(name: .customLong("figure"), help: "Path to .configure (default: ./.configure)")
+            var figureFile: String?
+
+            @OptionGroup var options: ConcatenateOptions
+
+            @Flag(help: "List matches (debug).")
+            var verbose: Bool = false
+
+            func run() throws {
+                let cwd = FileManager.default.currentDirectoryPath
+                let figPath = figureFile ?? "\(cwd)/.configure"
+                let filters = try ConfigureParser.parseFile(at: URL(fileURLWithPath: figPath))
+
+                let parsed = try ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore"))
+                let merged = try IgnoreMap(
+                    ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
+                    ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
+                    obscureValues: parsed.obscureValues
+                )
+
+                let resolver = ConfigureResolver(
+                    root: cwd,
+                    maxDepth: options.allSubdirectories ? nil : options.depth,
+                    includeDotfiles: options.includeDotFiles,
+                    ignoreMap: merged
+                )
+                let snippets = try resolver.resolve(filters: filters)
+
+                guard !snippets.isEmpty else {
+                    print("No snippets matched .configure.")
+                    return
+                }
+
+                let outputPath = cwd + "/concatenation.txt"
+                let snippetConcatenator = SnippetConcatenator(
+                    snippets: snippets,
+                    outputURL: URL(fileURLWithPath: outputPath),
+                    delimiterStyle: options.delimiterStyle,
+                    delimiterClosure: options.delimiterClosure,
+                    copyToClipboard: options.copyToClipboard,
+                    verbose: verbose
+                )
+                let total = try snippetConcatenator.run()
                 print("Concatenation completed: \(outputPath)")
                 print("\(total) lines concatenated.")
             }
