@@ -197,7 +197,8 @@ struct Concatenate: ParsableCommand {
         static let configuration = CommandConfiguration(
             commandName: "figure",
             abstract: "Manage the .configure file.",
-            subcommands: [Init.self],
+            subcommands: [Init.self, ConcatenateFromConfigure.self],
+            defaultSubcommand: ConcatenateFromConfigure.self
         )
 
         struct Init: ParsableCommand {
