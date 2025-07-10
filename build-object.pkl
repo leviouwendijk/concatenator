@@ -1,0 +1,11 @@
+uuid = "0A378ABA-114E-46C9-B114-93D4B813CDCB"
+name = "concatenator"
+type = "binary"
+version {
+    major = 1
+    minor = 0
+    patch = 1
+}
+details = "concatenate files into single file, as well as filetree"
+author = "Levi Ouwendijk"
+update = ""

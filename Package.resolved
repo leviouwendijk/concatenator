@@ -1,0 +1,33 @@
+{
+  "originHash" : "24b9196cf78a48f32bb6c35ad2bcd24c707fc1cad21009704f2f695e1f4fabc8",
+  "pins" : [
+    {
+      "identity" : "concatenation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leviouwendijk/Concatenation.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "fba65eaba26fc3728bffe0bde8f7cf91f3213491"
+      }
+    },
+    {
+      "identity" : "plate",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leviouwendijk/plate.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "1ae23a6e180323ec134272905c17d2070261a5d6"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d075877f3a7a06e75d46b3c3275dcba0ac9c9f9b"
+      }
+    }
+  ],
+  "version" : 3
+}
