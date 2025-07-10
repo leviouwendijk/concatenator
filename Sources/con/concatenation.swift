@@ -172,7 +172,7 @@ struct Concatenate: ParsableCommand {
                     return
                 }
 
-                let outputPath = cwd + "/concatenation.txt"
+                let outputPath = cwd + "/conselection.txt"
                 let concatenator = FileConcatenator(
                     inputFiles: urls,
                     outputURL: URL(fileURLWithPath: outputPath),
@@ -250,7 +250,7 @@ struct Concatenate: ParsableCommand {
                     return
                 }
 
-                let outputPath = cwd + "/concatenation.txt"
+                let outputPath = cwd + "/configure.txt"
                 let snippetConcatenator = SnippetConcatenator(
                     snippets: snippets,
                     outputURL: URL(fileURLWithPath: outputPath),
