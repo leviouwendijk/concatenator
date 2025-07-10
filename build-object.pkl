@@ -8,4 +8,4 @@ version {
 }
 details = "concatenate files into single file, as well as filetree"
 author = "Levi Ouwendijk"
-update = ""
+update = "https://raw.githubusercontent.com/leviouwendijk/concatenator/refs/heads/master/build-object.pkl"
