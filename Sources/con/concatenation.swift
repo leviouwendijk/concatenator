@@ -71,21 +71,31 @@ struct Concatenate: ParsableCommand {
         func run() throws {
             let cwd = FileManager.default.currentDirectoryPath
 
-            let parsed = try ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore"))
-            let merged = try IgnoreMap(
-                ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
-                ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
-                obscureValues: parsed.obscureValues
-            )
+            let finalMap: IgnoreMap
+            if let parsed = try? ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore")) {
+                let merged = try IgnoreMap(
+                    ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
+                    ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
+                    obscureValues: parsed.obscureValues
+                )
+                finalMap = merged
+            } else {
+                let argMap = try IgnoreMap(
+                    ignoreFiles: options.excludeFiles,
+                    ignoreDirectories: options.excludeDirs,
+                    obscureValues: [:]
+                )
+                finalMap = argMap
+            }
 
             let scanner = try FileScanner(
                 concatRoot: cwd,
                 maxDepth: options.allSubdirectories ? nil : options.depth,
                 includePatterns: options.includeFiles,
-                excludeFilePatterns: merged.ignoreFiles,
-                excludeDirPatterns: merged.ignoreDirectories,
+                excludeFilePatterns: finalMap.ignoreFiles,
+                excludeDirPatterns: finalMap.ignoreDirectories,
                 includeDotfiles: options.includeDotFiles,
-                ignoreMap: merged,
+                ignoreMap: finalMap,
                 ignoreStaticDefaults: options.includeStaticIgnores
             )
             let urls = try scanner.scan()
@@ -100,7 +110,7 @@ struct Concatenate: ParsableCommand {
                 trimBlankLines: true,
                 relativePaths: options.useRelativePaths,
                 rawOutput: options.rawOutput,
-                obscureMap: merged.obscureValues,
+                obscureMap: finalMap.obscureValues,
                 copyToClipboard: options.copyToClipboard,
                 verbose: options.verboseOutput
             )
