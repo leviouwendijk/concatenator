@@ -163,18 +163,28 @@ struct Concatenate: ParsableCommand {
                 let selPath = selectFile ?? "\(cwd)/.conselect"
                 let selection = try ConselectParser.parseFile(at: URL(fileURLWithPath: selPath))
 
-                let parsed = try ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore"))
-                let merged = try IgnoreMap(
-                    ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
-                    ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
-                    obscureValues: parsed.obscureValues
-                )
+                let finalMap: IgnoreMap
+                if let parsed = try? ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore")) {
+                    let merged = try IgnoreMap(
+                        ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
+                        ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
+                        obscureValues: parsed.obscureValues
+                    )
+                    finalMap = merged
+                } else {
+                    let argMap = try IgnoreMap(
+                        ignoreFiles: options.excludeFiles,
+                        ignoreDirectories: options.excludeDirs,
+                        obscureValues: [:]
+                    )
+                    finalMap = argMap
+                }
 
                 let urls = try selection.resolve(
                     root: cwd,
                     maxDepth: options.allSubdirectories ? nil : options.depth,
                     includeDotfiles: options.includeDotFiles,
-                    ignoreMap: merged,
+                    ignoreMap: finalMap,
                     verbose: verbose
                 )
                 guard !urls.isEmpty else {
@@ -192,7 +202,7 @@ struct Concatenate: ParsableCommand {
                     trimBlankLines: true,
                     relativePaths: options.useRelativePaths,
                     rawOutput: options.rawOutput,
-                    obscureMap: merged.obscureValues,
+                    obscureMap: finalMap.obscureValues,
                     copyToClipboard: options.copyToClipboard,
                     verbose: options.verboseOutput
                 )
@@ -240,18 +250,28 @@ struct Concatenate: ParsableCommand {
                 let figPath = figureFile ?? "\(cwd)/.configure"
                 let filters = try ConfigureParser.parseFile(at: URL(fileURLWithPath: figPath))
 
-                let parsed = try ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore"))
-                let merged = try IgnoreMap(
-                    ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
-                    ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
-                    obscureValues: parsed.obscureValues
-                )
+                let finalMap: IgnoreMap
+                if let parsed = try? ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore")) {
+                    let merged = try IgnoreMap(
+                        ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
+                        ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
+                        obscureValues: parsed.obscureValues
+                    )
+                    finalMap = merged
+                } else {
+                    let argMap = try IgnoreMap(
+                        ignoreFiles: options.excludeFiles,
+                        ignoreDirectories: options.excludeDirs,
+                        obscureValues: [:]
+                    )
+                    finalMap = argMap
+                }
 
                 let resolver = ConfigureResolver(
                     root: cwd,
                     maxDepth: options.allSubdirectories ? nil : options.depth,
                     includeDotfiles: options.includeDotFiles,
-                    ignoreMap: merged
+                    ignoreMap: finalMap
                 )
                 let snippets = try resolver.resolve(filters: filters)
 
