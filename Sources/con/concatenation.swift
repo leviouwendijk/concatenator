@@ -6,6 +6,9 @@ import Concatenation
 extension DelimiterStyle: @retroactive ExpressibleByArgument { }
 
 struct ConcatenateOptions: ParsableCommand {
+    @Option(name: .shortAndLong, help: "Set output file name.")
+    var outputFileName: String? = nil
+
     @Option(name: .shortAndLong, help: "Specify directories to include (default: current directory).")
     var directories: [String] = [FileManager.default.currentDirectoryPath]
     
@@ -100,7 +103,7 @@ struct Concatenate: ParsableCommand {
             )
             let urls = try scanner.scan()
 
-            let outputPath = cwd + "/concatenation.txt"
+            let outputPath = cwd + "/" + (options.outputFileName ?? "concatenation.txt")
             let concatenator = FileConcatenator(
                 inputFiles: urls,
                 outputURL: URL(fileURLWithPath: outputPath),
@@ -192,7 +195,7 @@ struct Concatenate: ParsableCommand {
                     return
                 }
 
-                let outputPath = cwd + "/conselection.txt"
+                let outputPath = cwd + "/" + (options.outputFileName ?? "conselection.txt")
                 let concatenator = FileConcatenator(
                     inputFiles: urls,
                     outputURL: URL(fileURLWithPath: outputPath),
@@ -280,7 +283,7 @@ struct Concatenate: ParsableCommand {
                     return
                 }
 
-                let outputPath = cwd + "/configure.txt"
+                let outputPath = cwd + "/" + (options.outputFileName ?? "configure.txt")
                 let snippetConcatenator = SnippetConcatenator(
                     snippets: snippets,
                     outputURL: URL(fileURLWithPath: outputPath),

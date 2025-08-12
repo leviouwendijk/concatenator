@@ -8,6 +8,9 @@ struct Tree: ParsableCommand {
         commandName: "tree",
         abstract: "Generate a hierarchical file tree."
     )
+
+    @Option(name: .shortAndLong, help: "Set output file name.")
+    var outputFileName: String? = nil
     
     @Option(name: .shortAndLong, help: "Specify directories to include (default: current directory).")
     var directories: [String] = [FileManager.default.currentDirectoryPath]
@@ -100,7 +103,7 @@ struct Tree: ParsableCommand {
         )
         let tree = maker.generate()
         if !clean {
-            let path = FileManager.default.currentDirectoryPath + "/tree"
+            let path = FileManager.default.currentDirectoryPath + "/" + (outputFileName ?? "tree.txt")
             try tree.write(toFile: path, atomically: true, encoding: .utf8)
             print("File tree generated: \(path)")
         } else {
