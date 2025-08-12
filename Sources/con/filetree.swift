@@ -53,23 +53,37 @@ struct Tree: ParsableCommand {
     }
     
     func run() throws {
-        let parsed = try ConignoreParser.parseFile(
-            at: URL(fileURLWithPath: directories[0] + "/.conignore")
-        )
-        let merged = try IgnoreMap(
-            ignoreFiles: parsed.ignoreFiles + excludeFiles,
-            ignoreDirectories: parsed.ignoreDirectories + excludeDirs,
-            obscureValues: parsed.obscureValues
-        )
+        let cwd = FileManager.default.currentDirectoryPath
+        // let parsed = try ConignoreParser.parseFile(
+        //     at: URL(fileURLWithPath: directories[0] + "/.conignore")
+        // )
+
+        let finalMap: IgnoreMap
+        if let parsed = try? ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore")) {
+            let merged = try IgnoreMap(
+                ignoreFiles: parsed.ignoreFiles + excludeFiles,
+                ignoreDirectories: parsed.ignoreDirectories + excludeDirs,
+                obscureValues: parsed.obscureValues
+            )
+            finalMap = merged
+        } else {
+            let argMap = try IgnoreMap(
+                ignoreFiles: excludeFiles,
+                ignoreDirectories: excludeDirs,
+                obscureValues: [:]
+            )
+            finalMap = argMap
+        }
+
         let scanner = try FileScanner(
             treeRoot: directories[0],
             maxDepth: allSubdirectories ? nil : depth,
             includePatterns: includeFiles,
-            excludeFilePatterns: merged.ignoreFiles,
-            excludeDirPatterns: merged.ignoreDirectories,
+            excludeFilePatterns: finalMap.ignoreFiles,
+            excludeDirPatterns: finalMap.ignoreDirectories,
             includeDotfiles: includeDotFiles,
             includeEmpty: includeEmpty,
-            ignoreMap: merged,
+            ignoreMap: finalMap,
             ignoreStaticDefaults: includeStaticIgnores
         )
         let urls = try scanner.scan()
