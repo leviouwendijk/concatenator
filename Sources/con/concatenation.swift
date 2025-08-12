@@ -63,7 +63,7 @@ struct Concatenate: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "concat",
         abstract: "Concatenate file contents.",
-        subcommands: [Default.self, Select.self, Figure.self],
+        subcommands: [Default.self, Select.self, Figure.self, `Any`.self],
         defaultSubcommand: Default.self
 
     )
@@ -295,6 +295,91 @@ struct Concatenate: ParsableCommand {
                 let total = try snippetConcatenator.run()
                 print("Concatenation completed: \(outputPath)")
                 print("\(total) lines concatenated.")
+            }
+        }
+    }
+
+    struct `Any`: ParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "any",
+            abstract: "Concatenate arbitrary absolute/relative files via .conany.",
+            subcommands: [Init.self, Run.self],
+            defaultSubcommand: Run.self
+        )
+
+        struct Init: ParsableCommand {
+            @Flag(help: "Force overwrite existing .conany")
+            var force: Bool = false
+
+            func run() throws {
+                let initr = ConAnyInitializer()
+                do { try initr.initialize(force: force); print(".conany created.") }
+                catch ConAnyInitError.alreadyExists { print(".conany already exists. Use --force to overwrite.") }
+            }
+        }
+
+        struct Run: ParsableCommand {
+            @Option(name: .customLong("config"), help: "Path to .conany (default: ./.conany)")
+            var configPath: String?
+
+            @OptionGroup var options: ConcatenateOptions
+            @Flag(help: "Verbose resolution")
+            var verbose: Bool = false
+
+            func run() throws {
+                let cwd = FileManager.default.currentDirectoryPath
+                let cfgURL = URL(fileURLWithPath: configPath ?? "\(cwd)/.conany").standardizedFileURL
+                let cfg = try ConAnyParser.parseFile(at: cfgURL)
+
+                // optional .conignore merge (reuse your existing logic)
+                let finalMap: IgnoreMap
+                if let parsed = try? ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore")) {
+                    finalMap = try IgnoreMap(ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
+                                             ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
+                                             obscureValues: parsed.obscureValues)
+                } else {
+                    finalMap = try IgnoreMap(ignoreFiles: options.excludeFiles,
+                                             ignoreDirectories: options.excludeDirs,
+                                             obscureValues: [:])
+                }
+
+                let resolver = ConAnyResolver(baseDir: cfgURL.deletingLastPathComponent().path)
+
+                var totalLinesAll = 0
+                for r in cfg.renderables {
+                    let urls = try resolver.resolve(r,
+                                                    maxDepth: options.allSubdirectories ? nil : options.depth,
+                                                    includeDotfiles: options.includeDotFiles,
+                                                    ignoreMap: finalMap,
+                                                    verbose: verbose)
+
+                    guard !urls.isEmpty else {
+                        print("No files matched block → \(r.output ?? "any.txt")")
+                        continue
+                    }
+
+                    let outURL = resolver.outputURL(for: r)
+                    let concat = FileConcatenator(
+                        inputFiles: urls,
+                        outputURL: outURL,
+                        delimiterStyle: options.delimiterStyle,
+                        delimiterClosure: options.delimiterClosure,
+                        maxLinesPerFile: options.lineLimit,
+                        trimBlankLines: true,
+                        relativePaths: false,
+                        rawOutput: options.rawOutput,
+                        obscureMap: finalMap.obscureValues,
+                        copyToClipboard: options.copyToClipboard,
+                        verbose: options.verboseOutput
+                    )
+                    let total = try concat.run()
+                    totalLinesAll += total
+                    print("Concatenation completed: \(outURL.path)")
+                    print("  \(total) lines.")
+                }
+                if cfg.renderables.count > 1 {
+                    print("Done. Blocks: \(cfg.renderables.count), total lines: \(totalLinesAll).")
+                }
             }
         }
     }
