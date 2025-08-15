@@ -31,7 +31,7 @@ struct ConcatenateOptions: ParsableCommand {
     var excludeFiles: [String] = []
     
     @Option(name: .shortAndLong, help: "Limit number of lines per file (default: 10_000).")
-    var lineLimit: Int = 10_000
+    var lineLimit: Int?
     
     @Flag(name: .customLong("verbose-out"), help: "Enable debugging output.")
     var verboseOutput: Bool = false
@@ -57,6 +57,10 @@ struct ConcatenateOptions: ParsableCommand {
     var includeStaticIgnores: Bool {
         return !excludeStaticIgnores
     }
+
+    func limit() -> Int? {
+        return lineLimit == nil ? 10_000 : lineLimit == 0   ? nil : lineLimit
+    }
 }
 
 struct Concatenate: ParsableCommand {
@@ -67,6 +71,7 @@ struct Concatenate: ParsableCommand {
         defaultSubcommand: Default.self
 
     )
+
     
     struct Default: ParsableCommand {
         @OptionGroup var options: ConcatenateOptions
@@ -109,7 +114,7 @@ struct Concatenate: ParsableCommand {
                 outputURL: URL(fileURLWithPath: outputPath),
                 delimiterStyle: options.delimiterStyle,
                 delimiterClosure: options.delimiterClosure,
-                maxLinesPerFile: options.lineLimit,
+                maxLinesPerFile: options.limit(),
                 trimBlankLines: true,
                 relativePaths: options.useRelativePaths,
                 rawOutput: options.rawOutput,
@@ -201,7 +206,7 @@ struct Concatenate: ParsableCommand {
                     outputURL: URL(fileURLWithPath: outputPath),
                     delimiterStyle: options.delimiterStyle,
                     delimiterClosure: options.delimiterClosure,
-                    maxLinesPerFile: options.lineLimit,
+                    maxLinesPerFile: options.limit(),
                     trimBlankLines: true,
                     relativePaths: options.useRelativePaths,
                     rawOutput: options.rawOutput,
@@ -364,7 +369,7 @@ struct Concatenate: ParsableCommand {
                         outputURL: outURL,
                         delimiterStyle: options.delimiterStyle,
                         delimiterClosure: options.delimiterClosure,
-                        maxLinesPerFile: options.lineLimit,
+                        maxLinesPerFile: options.limit(),
                         trimBlankLines: true,
                         relativePaths: false,
                         rawOutput: options.rawOutput,
