@@ -30,8 +30,8 @@ struct ConcatenateOptions: ParsableCommand {
     @Option(name: .customLong("fe"), help: "Exclude specific files from concatenation (supports wildcards, e.g., *.log).")
     var excludeFiles: [String] = []
     
-    @Option(name: .shortAndLong, help: "Limit number of lines per file (default: 5000).")
-    var lineLimit: Int = 5000
+    @Option(name: .shortAndLong, help: "Limit number of lines per file (default: 10_000).")
+    var lineLimit: Int = 10_000
     
     @Flag(name: .customLong("verbose-out"), help: "Enable debugging output.")
     var verboseOutput: Bool = false
