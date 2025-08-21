@@ -123,8 +123,16 @@ struct Concatenate: ParsableCommand {
                 verbose: options.verboseOutput
             )
             let total = try concatenator.run()
-            print("Concatenation completed: \(outputPath)")
-            print("\(total) lines concatenated.")
+
+            printSuccess(
+                outputPath: outputPath,
+                totalLines: total
+            )
+            // print("Concatenation completed:")
+            // let statusLine = "Status: " + "ok".ansi(.green)
+            // print(statusLine.indent())
+            // print(outputPath.indent())
+            // print("\(total) lines concatenated.")
         }
     }
 
@@ -215,8 +223,13 @@ struct Concatenate: ParsableCommand {
                     verbose: options.verboseOutput
                 )
                 let total = try concatenator.run()
-                print("Concatenation completed: \(outputPath)")
-                print("\(total) lines concatenated.")
+                // print("Concatenation completed: \(outputPath)")
+                // print("\(total) lines concatenated.")
+
+                printSuccess(
+                    outputPath: outputPath,
+                    totalLines: total
+                )
             }
         }
     }
@@ -298,8 +311,12 @@ struct Concatenate: ParsableCommand {
                     verbose: verbose
                 )
                 let total = try snippetConcatenator.run()
-                print("Concatenation completed: \(outputPath)")
-                print("\(total) lines concatenated.")
+                // print("Concatenation completed: \(outputPath)")
+                // print("\(total) lines concatenated.")
+                printSuccess(
+                    outputPath: outputPath,
+                    totalLines: total
+                )
             }
         }
     }
@@ -379,8 +396,12 @@ struct Concatenate: ParsableCommand {
                     )
                     let total = try concat.run()
                     totalLinesAll += total
-                    print("Concatenation completed: \(outURL.path)")
-                    print("  \(total) lines.")
+                    // print("Concatenation completed: \(outURL.path)")
+                    // print("  \(total) lines.")
+                    printSuccess(
+                        outputPath: outURL.path,
+                        totalLines: total
+                    )
                 }
                 if cfg.renderables.count > 1 {
                     print("Done. Blocks: \(cfg.renderables.count), total lines: \(totalLinesAll).")
