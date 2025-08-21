@@ -5,11 +5,17 @@ public func printSuccess(
     outputPath: String,
     totalLines total: Int
 ) {
-    let statusLine = "Status: " + "ok".ansi(.green)
+    // let statusLine = "Status: " + "ok".ansi(.green)
+    let pathLine = "source: \(outputPath)".ansi(.brightBlack)
 
-    print("Concatenation completed:")
-    print(statusLine.indent())
-    print(outputPath.indent())
-    print("\(total) lines concatenated.")
+    let headerLine = "Concatenation " + "ok".ansi(.green, .bold)
+    let totalsLine = "\(total) ".ansi(.cyan) + "lines concatenated"
+
+    // print("Concatenation completed:")
+    print(headerLine)
+    // print(statusLine.indent())
+    print(pathLine.indent())
+    // print("\(total) lines concatenated.".indent())
+    print(totalsLine.indent())
     print()
 }
