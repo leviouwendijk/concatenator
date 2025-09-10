@@ -356,13 +356,17 @@ struct Concatenate: ParsableCommand {
                 // optional .conignore merge (reuse your existing logic)
                 let finalMap: IgnoreMap
                 if let parsed = try? ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore")) {
-                    finalMap = try IgnoreMap(ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
-                                             ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
-                                             obscureValues: parsed.obscureValues)
+                    finalMap = try IgnoreMap(
+                        ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
+                        ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
+                        obscureValues: parsed.obscureValues
+                    )
                 } else {
-                    finalMap = try IgnoreMap(ignoreFiles: options.excludeFiles,
-                                             ignoreDirectories: options.excludeDirs,
-                                             obscureValues: [:])
+                    finalMap = try IgnoreMap(
+                        ignoreFiles: options.excludeFiles,
+                        ignoreDirectories: options.excludeDirs,
+                        obscureValues: [:]
+                    )
                 }
 
                 let resolver = ConAnyResolver(baseDir: cfgURL.deletingLastPathComponent().path)
@@ -370,10 +374,11 @@ struct Concatenate: ParsableCommand {
                 var totalLinesAll = 0
                 for r in cfg.renderables {
                     let urls = try resolver.resolve(r,
-                                                    maxDepth: options.allSubdirectories ? nil : options.depth,
-                                                    includeDotfiles: options.includeDotFiles,
-                                                    ignoreMap: finalMap,
-                                                    verbose: verbose)
+                        maxDepth: options.allSubdirectories ? nil : options.depth,
+                        includeDotfiles: options.includeDotFiles,
+                        ignoreMap: finalMap,
+                        verbose: verbose
+                    )
 
                     guard !urls.isEmpty else {
                         print("No files matched block → \(r.output ?? "any.txt")")
