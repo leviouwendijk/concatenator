@@ -56,6 +56,13 @@ struct ConcatenateOptions: ParsableCommand {
 
     @Flag(name: .shortAndLong, help: "Allow files to be concatenated that are otherwise excluded by protection defaults.")
     var allowSecrets: Bool = false
+    
+    @Flag(name: .shortAndLong, help: "Turn off deep inspection for file protection of secrets.")
+    var noDeepInspect: Bool = false
+
+    var deepInspect: Bool {
+        return !noDeepInspect
+    }
 
     var includeStaticIgnores: Bool {
         return !excludeStaticIgnores
@@ -124,7 +131,8 @@ struct Concatenate: ParsableCommand {
                 obscureMap: finalMap.obscureValues,
                 copyToClipboard: options.copyToClipboard,
                 verbose: options.verboseOutput,
-                allowSecrets: options.allowSecrets
+                allowSecrets: options.allowSecrets,
+                deepSecretInspection: options.deepInspect
             )
             let total = try concatenator.run()
 
@@ -225,7 +233,8 @@ struct Concatenate: ParsableCommand {
                     obscureMap: finalMap.obscureValues,
                     copyToClipboard: options.copyToClipboard,
                     verbose: options.verboseOutput,
-                    allowSecrets: options.allowSecrets
+                    allowSecrets: options.allowSecrets,
+                    deepSecretInspection: options.deepInspect
                 )
                 let total = try concatenator.run()
                 // print("Concatenation completed: \(outputPath)")
@@ -405,7 +414,8 @@ struct Concatenate: ParsableCommand {
                         copyToClipboard: options.copyToClipboard,
                         verbose: options.verboseOutput,
                         context: context,
-                        allowSecrets: options.allowSecrets
+                        allowSecrets: options.allowSecrets,
+                        deepSecretInspection: options.deepInspect
                     )
                     let total = try concat.run()
                     totalLinesAll += total
