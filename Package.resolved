@@ -7,7 +7,7 @@
       "location" : "https://github.com/leviouwendijk/Concatenation.git",
       "state" : {
         "branch" : "master",
-        "revision" : "96d6f19cd97df432af584db83c7c2a2a36325523"
+        "revision" : "7d447a69b96f0af10980c86bc334cf84d3ceb7db"
       }
     },
     {
@@ -16,7 +16,7 @@
       "location" : "https://github.com/leviouwendijk/plate.git",
       "state" : {
         "branch" : "master",
-        "revision" : "dd0a699b6cb7acf6433cfdd0a9880eef4d157045"
+        "revision" : "7c0f586518e8c5de3e60353a4c0aa2931e5f204f"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/apple/swift-argument-parser.git",
       "state" : {
         "branch" : "main",
-        "revision" : "d075877f3a7a06e75d46b3c3275dcba0ac9c9f9b"
+        "revision" : "c94be10e103ecefca8c67f8fb9a604be98ed8783"
       }
     }
   ],

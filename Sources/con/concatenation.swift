@@ -54,6 +54,9 @@ struct ConcatenateOptions: ParsableCommand {
     @Flag(name: .shortAndLong, help: "Excluding the statically ignored files (may contain sensitive content)")
     var excludeStaticIgnores: Bool = false
 
+    @Flag(name: .shortAndLong, help: "Allow files to be concatenated that are otherwise excluded by protection defaults.")
+    var allowSecrets: Bool = false
+
     var includeStaticIgnores: Bool {
         return !excludeStaticIgnores
     }
@@ -120,7 +123,8 @@ struct Concatenate: ParsableCommand {
                 rawOutput: options.rawOutput,
                 obscureMap: finalMap.obscureValues,
                 copyToClipboard: options.copyToClipboard,
-                verbose: options.verboseOutput
+                verbose: options.verboseOutput,
+                allowSecrets: options.allowSecrets
             )
             let total = try concatenator.run()
 
@@ -220,7 +224,8 @@ struct Concatenate: ParsableCommand {
                     rawOutput: options.rawOutput,
                     obscureMap: finalMap.obscureValues,
                     copyToClipboard: options.copyToClipboard,
-                    verbose: options.verboseOutput
+                    verbose: options.verboseOutput,
+                    allowSecrets: options.allowSecrets
                 )
                 let total = try concatenator.run()
                 // print("Concatenation completed: \(outputPath)")
@@ -386,6 +391,7 @@ struct Concatenate: ParsableCommand {
                     }
 
                     let outURL = resolver.outputURL(for: r)
+                    let context = "con any block '\(r.output ?? "nil")' → \(outURL.path)"
                     let concat = FileConcatenator(
                         inputFiles: urls,
                         outputURL: outURL,
@@ -397,7 +403,9 @@ struct Concatenate: ParsableCommand {
                         rawOutput: options.rawOutput,
                         obscureMap: finalMap.obscureValues,
                         copyToClipboard: options.copyToClipboard,
-                        verbose: options.verboseOutput
+                        verbose: options.verboseOutput,
+                        context: context,
+                        allowSecrets: options.allowSecrets
                     )
                     let total = try concat.run()
                     totalLinesAll += total
