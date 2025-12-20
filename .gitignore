@@ -12,3 +12,8 @@ DerivedData/
 notes
 concatenation.txt
 .conignore
+
+# auto-added ignorables:
+compiled.pkl
+/compiled.pkl
+**/compiled.pkl
