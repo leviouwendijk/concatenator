@@ -1,5 +1,5 @@
 import Foundation
-import plate
+import Terminal
 
 public func printSuccess(
     outputPath: String,

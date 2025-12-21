@@ -1,6 +1,5 @@
 import Foundation
 import ArgumentParser
-import plate
 import Concatenation
 
 extension Concatenate {

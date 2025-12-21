@@ -1,13 +1,22 @@
 {
-  "originHash" : "24b9196cf78a48f32bb6c35ad2bcd24c707fc1cad21009704f2f695e1f4fabc8",
+  "originHash" : "f3df42478bf9a11d70fbd0081ab820be3c04aba772f7f5b5aff6625321ec1aa3",
   "pins" : [
+    {
+      "identity" : "clipboard",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leviouwendijk/Clipboard.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "25d4edb471b4b19a854b0bf4f35beb47f1aca421"
+      }
+    },
     {
       "identity" : "concatenation",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/leviouwendijk/Concatenation.git",
       "state" : {
         "branch" : "master",
-        "revision" : "2ecfca574abda7e0aab247b906e6857baaa8b94a"
+        "revision" : "552ba2449b1681b6ecab28f8975bb0240876a653"
       }
     },
     {
@@ -20,21 +29,21 @@
       }
     },
     {
-      "identity" : "path",
+      "identity" : "primitives",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/leviouwendijk/Path.git",
+      "location" : "https://github.com/leviouwendijk/Primitives.git",
       "state" : {
         "branch" : "master",
-        "revision" : "b18278a4832ef11e4d6c8051e1ff1c03363c03a5"
+        "revision" : "3a899c26f691807ef4c36370d364698a64c99e77"
       }
     },
     {
-      "identity" : "plate",
+      "identity" : "strings",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/leviouwendijk/plate.git",
+      "location" : "https://github.com/leviouwendijk/Strings.git",
       "state" : {
         "branch" : "master",
-        "revision" : "8602767890efcba15289aaa64f6cfe5a2f608b19"
+        "revision" : "86a939d7bbb3e25808f88fbcedcee4069a5a5ae1"
       }
     },
     {
@@ -52,16 +61,7 @@
       "location" : "https://github.com/leviouwendijk/Terminal.git",
       "state" : {
         "branch" : "master",
-        "revision" : "f71bcf025c0f480c775d9a4fdb6d3ea3db4b33cf"
-      }
-    },
-    {
-      "identity" : "version",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/leviouwendijk/Version.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "a7eeda6e3b84eca36f61366e5d420787c9aba69f"
+        "revision" : "972943a2d925f8ba4bebf99c1af590de8fe896e0"
       }
     }
   ],

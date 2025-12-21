@@ -1,7 +1,4 @@
-import Foundation
 import ArgumentParser
-import plate
-import Concatenation
 
 struct Concatenate: ParsableCommand {
     static let configuration = CommandConfiguration(
