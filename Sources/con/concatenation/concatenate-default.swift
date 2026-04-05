@@ -4,26 +4,27 @@ import Concatenation
 
 extension Concatenate {
     struct Default: ParsableCommand {
-        @OptionGroup var options: ConcatenateOptions
+        @OptionGroup
+        var options: ConcatenateOptions
         
         func run() throws {
             let cwd = FileManager.default.currentDirectoryPath
 
             let finalMap: IgnoreMap
-            if let parsed = try? ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore")) {
-                let merged = try IgnoreMap(
+            if let parsed = try? ConignoreParser.parseFile(
+                at: URL(fileURLWithPath: cwd + "/.conignore")
+            ) {
+                finalMap = try IgnoreMap(
                     ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
                     ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
                     obscureValues: parsed.obscureValues
                 )
-                finalMap = merged
             } else {
-                let argMap = try IgnoreMap(
+                finalMap = try IgnoreMap(
                     ignoreFiles: options.excludeFiles,
                     ignoreDirectories: options.excludeDirs,
                     obscureValues: [:]
                 )
-                finalMap = argMap
             }
 
             let scanner = try FileScanner(
@@ -36,9 +37,11 @@ extension Concatenate {
                 ignoreMap: finalMap,
                 ignoreStaticDefaults: options.includeStaticIgnores
             )
+
             let urls = try scanner.scan()
 
             let outputPath = cwd + "/" + (options.outputFileName ?? "concatenation.txt")
+
             let concatenator = FileConcatenator(
                 inputFiles: urls,
                 outputURL: URL(fileURLWithPath: outputPath),
@@ -48,23 +51,21 @@ extension Concatenate {
                 trimBlankLines: true,
                 relativePaths: options.useRelativePaths,
                 rawOutput: options.rawOutput,
+                includeSourceLineNumbers: options.includeSourceLineNumbers,
+                includeSourceModifiedAt: options.includeSourceModifiedAt,
                 obscureMap: finalMap.obscureValues,
                 copyToClipboard: options.copyToClipboard,
                 verbose: options.verboseOutput,
                 allowSecrets: options.allowSecrets,
                 deepSecretInspection: options.deepInspect
             )
+
             let total = try concatenator.run()
 
             printSuccess(
                 outputPath: outputPath,
                 totalLines: total
             )
-            // print("Concatenation completed:")
-            // let statusLine = "Status: " + "ok".ansi(.green)
-            // print(statusLine.indent())
-            // print(outputPath.indent())
-            // print("\(total) lines concatenated.")
         }
     }
 }

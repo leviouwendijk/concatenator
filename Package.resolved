@@ -1,5 +1,5 @@
 {
-  "originHash" : "f3df42478bf9a11d70fbd0081ab820be3c04aba772f7f5b5aff6625321ec1aa3",
+  "originHash" : "52e50f800360bbea977b4384cbb1c915984fb0d0a5e925107baae41a43d774f6",
   "pins" : [
     {
       "identity" : "clipboard",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/leviouwendijk/Concatenation.git",
       "state" : {
         "branch" : "master",
-        "revision" : "552ba2449b1681b6ecab28f8975bb0240876a653"
+        "revision" : "82b1a8b3991847a4ef9edf89caa5774495b0be9b"
       }
     },
     {
@@ -29,12 +29,21 @@
       }
     },
     {
+      "identity" : "position",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leviouwendijk/Position.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "25862d2572361415a692d446b091ad9f09169fcc"
+      }
+    },
+    {
       "identity" : "primitives",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/leviouwendijk/Primitives.git",
       "state" : {
         "branch" : "master",
-        "revision" : "3a899c26f691807ef4c36370d364698a64c99e77"
+        "revision" : "88c0aad7d912d13fcc9131ac271d1691da998355"
       }
     },
     {
@@ -52,7 +61,7 @@
       "location" : "https://github.com/apple/swift-argument-parser.git",
       "state" : {
         "branch" : "main",
-        "revision" : "d56133d94a81f2c863d05a3fabf7a30ac7efb198"
+        "revision" : "aeb51bc98246a7609cf99a21e4ac37483e6c3695"
       }
     },
     {

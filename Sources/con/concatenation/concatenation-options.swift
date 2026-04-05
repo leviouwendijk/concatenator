@@ -15,7 +15,7 @@ struct ConcatenateOptions: ParsableCommand {
     var excludeDirs: [String] = []
     
     @Option(name: [.customShort("s"), .customLong("depth")], help: "Set maximum scope / depth level to scan (default: unlimited).")
-    var depth: Int? = nil  // Default to unlimited depth.
+    var depth: Int? = nil
 
     @Flag(name: .customLong("all"), help: "Iterate over all subdirectories.")
     var allSubdirectories: Bool = false
@@ -35,10 +35,10 @@ struct ConcatenateOptions: ParsableCommand {
     @Flag(name: .customLong("verbose-out"), help: "Enable debugging output.")
     var verboseOutput: Bool = false
     
-    @Option(name: .customLong("delimiter"), help: "Set delimiter style (none, basic, verbose).")
+    @Option(name: .customLong("delimiter"), help: "Set delimiter style (none, comment, asterisk, classic, boxed).")
     var delimiterStyle: DelimiterStyle = .boxed
 
-    @Flag(name: .customLong("closure"), help: "Add a end-of-file delimiter.")
+    @Flag(name: .customLong("closure"), help: "Add an end-of-file delimiter.")
     var delimiterClosure: Bool = false
     
     @Option(name: .customLong("relative"), help: "Use relative paths in headers instead of absolute paths (true/false).")
@@ -46,6 +46,12 @@ struct ConcatenateOptions: ParsableCommand {
     
     @Flag(name: .customLong("raw"), help: "Avoid headers or file tree, preserve syntax.")
     var rawOutput: Bool = false
+
+    @Option(name: .customLong("line-numbers"), help: "Prefix each concatenated source-file line with its original line number.")
+    var includeSourceLineNumbers: Bool = true
+
+    @Option(name: .customLong("modified-at"), help: "Include each source file's filesystem modification timestamp in its header.")
+    var includeSourceModifiedAt: Bool = true
     
     @Flag(name: .shortAndLong, help: "Copy the concatenation output to clipboard.")
     var copyToClipboard: Bool = false
@@ -60,14 +66,14 @@ struct ConcatenateOptions: ParsableCommand {
     var noDeepInspect: Bool = false
 
     var deepInspect: Bool {
-        return !noDeepInspect
+        !noDeepInspect
     }
 
     var includeStaticIgnores: Bool {
-        return !excludeStaticIgnores
+        !excludeStaticIgnores
     }
 
     func limit() -> Int? {
-        return lineLimit == nil ? 10_000 : lineLimit == 0   ? nil : lineLimit
+        lineLimit == nil ? 10_000 : lineLimit == 0 ? nil : lineLimit
     }
 }

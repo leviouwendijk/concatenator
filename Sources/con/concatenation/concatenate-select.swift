@@ -14,7 +14,7 @@ extension Concatenate {
         struct Initialize: ParsableCommand {
             static let configuration = CommandConfiguration(
                 commandName: "init",
-                abstract: "initialize a .conselect file.",
+                abstract: "initialize a .conselect file."
             )
 
             @Flag(help: "Force overwrite .conselect file")
@@ -22,6 +22,7 @@ extension Concatenate {
 
             func run() throws {
                 let initializer = ConselectInitializer()
+
                 do {
                     try initializer.initialize(force: force)
                     print(".conselect file has been created.")
@@ -35,7 +36,8 @@ extension Concatenate {
             @Option(name: .customLong("select"), help: "Path to .conselect (default: ./.conselect)")
             var selectFile: String?
 
-            @OptionGroup var options: ConcatenateOptions
+            @OptionGroup
+            var options: ConcatenateOptions
 
             @Flag(help: "List matches (debug).")
             var verbose: Bool = false
@@ -43,23 +45,25 @@ extension Concatenate {
             func run() throws {
                 let cwd = FileManager.default.currentDirectoryPath
                 let selPath = selectFile ?? "\(cwd)/.conselect"
-                let selection = try ConselectParser.parseFile(at: URL(fileURLWithPath: selPath))
+                let selection = try ConselectParser.parseFile(
+                    at: URL(fileURLWithPath: selPath)
+                )
 
                 let finalMap: IgnoreMap
-                if let parsed = try? ConignoreParser.parseFile(at: URL(fileURLWithPath: cwd + "/.conignore")) {
-                    let merged = try IgnoreMap(
+                if let parsed = try? ConignoreParser.parseFile(
+                    at: URL(fileURLWithPath: cwd + "/.conignore")
+                ) {
+                    finalMap = try IgnoreMap(
                         ignoreFiles: parsed.ignoreFiles + options.excludeFiles,
                         ignoreDirectories: parsed.ignoreDirectories + options.excludeDirs,
                         obscureValues: parsed.obscureValues
                     )
-                    finalMap = merged
                 } else {
-                    let argMap = try IgnoreMap(
+                    finalMap = try IgnoreMap(
                         ignoreFiles: options.excludeFiles,
                         ignoreDirectories: options.excludeDirs,
                         obscureValues: [:]
                     )
-                    finalMap = argMap
                 }
 
                 let urls = try selection.resolve(
@@ -69,12 +73,14 @@ extension Concatenate {
                     ignoreMap: finalMap,
                     verbose: verbose
                 )
+
                 guard !urls.isEmpty else {
                     print("No files matched .conselect.")
                     return
                 }
 
                 let outputPath = cwd + "/" + (options.outputFileName ?? "conselection.txt")
+
                 let concatenator = FileConcatenator(
                     inputFiles: urls,
                     outputURL: URL(fileURLWithPath: outputPath),
@@ -84,15 +90,16 @@ extension Concatenate {
                     trimBlankLines: true,
                     relativePaths: options.useRelativePaths,
                     rawOutput: options.rawOutput,
+                    includeSourceLineNumbers: options.includeSourceLineNumbers,
+                    includeSourceModifiedAt: options.includeSourceModifiedAt,
                     obscureMap: finalMap.obscureValues,
                     copyToClipboard: options.copyToClipboard,
                     verbose: options.verboseOutput,
                     allowSecrets: options.allowSecrets,
                     deepSecretInspection: options.deepInspect
                 )
+
                 let total = try concatenator.run()
-                // print("Concatenation completed: \(outputPath)")
-                // print("\(total) lines concatenated.")
 
                 printSuccess(
                     outputPath: outputPath,
