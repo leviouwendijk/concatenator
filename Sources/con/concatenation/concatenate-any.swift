@@ -83,12 +83,20 @@ extension Concatenate {
                 var totalLinesAll = 0
 
                 for renderable in cfg.renderables {
-                    let urls = try resolver.resolve(
+                    let matches = try resolver.resolveMatches(
                         renderable,
                         maxDepth: options.allSubdirectories ? nil : options.depth,
                         includeDotfiles: options.includeDotFiles,
                         ignoreMap: finalMap,
                         verbose: verbose
+                    )
+
+                    let urls = matches.map(\.url)
+
+                    let selectedContentByFile = Dictionary(
+                        uniqueKeysWithValues: matches.map {
+                            ($0.url.standardizedFileURL, $0.contentSelections)
+                        }
                     )
 
                     guard !urls.isEmpty else {
@@ -108,6 +116,7 @@ extension Concatenate {
                         inputFiles: urls,
                         outputURL: outURL,
                         context: renderable.context,
+                        selectedContentByFile: selectedContentByFile,
 
                         delimiterStyle: options.delimiterStyle,
                         delimiterClosure: options.delimiterClosure,
